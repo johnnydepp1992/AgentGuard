@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgentGuard Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; max-width: 600px; margin: 0 auto; }
+        h1 { color: #333; }
+        .status { background: #e2e8f0; padding: 15px; border-radius: 5px; margin-bottom: 20px; font-size: 18px; font-weight: bold; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        button { background: #3b82f6; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; margin-top: 10px; }
+        button:hover { background: #2563eb; }
+        .result { margin-top: 15px; padding: 10px; border-radius: 5px; display: none; font-weight: bold; }
+        .success { background: #dcfce7; color: #166534; display: block; }
+        .error { background: #fee2e2; color: #991b1b; display: block; }
+        .warning { background: #fef9c3; color: #854d0e; display: block; }
+    </style>
+</head>
+<body>
+    <h1>AgentGuard 🛡️</h1>
+    <p>AI Wallet Security Dashboard - NEAR Hackathon 2026</p>
+    
+    <div class="status" id="status-board">
+        Total spent today: $0 out of $10 limit.
+    </div>
+
+    <div class="card">
+        <h3>Test 1: Normal Payment</h3>
+        <p>Agent requests a $3 payment to a whitelisted address.</p>
+        <button onclick="testNormal()">Simulate Payment</button>
+        <div id="res1" class="result"></div>
+    </div>
+
+    <div class="card">
+        <h3>Test 2: Over Transaction Limit</h3>
+        <p>Agent requests a $20 payment (Limit is $5 per tx).</p>
+        <button onclick="testOverLimit()">Simulate Payment</button>
+        <div id="res2" class="result"></div>
+    </div>
+
+    <div class="card">
+        <h3>Test 3: Unknown Address</h3>
+        <p>Agent requests a $4 payment to an unknown address.</p>
+        <button onclick="testUnknown()">Simulate Payment</button>
+        <div id="res3" class="result"></div>
+    </div>
+
+    <script>
+        let dailySpent = 0;
+        const maxDaily = 10;
+
+        function updateStatus() {
+            document.getElementById('status-board').innerText = `Total spent today: $${dailySpent} out of $${maxDaily} limit.`;
+        }
+
+        function testNormal() {
+            if (dailySpent + 3 <= maxDaily) {
+                dailySpent += 3;
+                document.getElementById('res1').className = 'result success';
+                document.getElementById('res1').innerText = 'Auto-Approved: Payment successful.';
+                updateStatus();
+            } else {
+                document.getElementById('res1').className = 'result error';
+                document.getElementById('res1').innerText = 'Auto-Rejected: Daily spending limit reached.';
+            }
+        }
+
+        function testOverLimit() {
+            document.getElementById('res2').className = 'result error';
+            document.getElementById('res2').innerText = 'Auto-Rejected: Amount exceeds the maximum per transaction limit.';
+        }
+
+        function testUnknown() {
+            document.getElementById('res3').className = 'result warning';
+            document.getElementById('res3').innerText = 'Human Approval Required: Unrecognized destination address.';
+        }
+    </script>
+</body>
+</html>
