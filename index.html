@@ -3,145 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgentGuard Demo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>AgentGuard | Security Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
+            --bg-dark: #050505;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.5);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --accent: #3b82f6;
-            --accent-hover: #60a5fa;
         }
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-color); 
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
             color: var(--text-main);
-            padding: 20px; 
-            max-width: 650px; 
-            margin: 0 auto; 
-            text-align: left; 
-            direction: ltr; 
-        }
-        h1 { 
-            font-weight: 800; 
-            font-size: 2.5rem;
-            background: linear-gradient(to right, #60a5fa, #a855f7); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            margin-bottom: 5px;
-        }
-        .subtitle { 
-            color: var(--text-muted); 
-            margin-top: 0; 
-            margin-bottom: 30px; 
-            font-size: 1rem;
-        }
-        .status-banner { 
-            background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(168,85,247,0.1) 100%);
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            padding: 20px; 
-            border-radius: 12px; 
-            margin-bottom: 30px; 
-            font-size: 1.2rem; 
-            font-weight: 600; 
+            min-height: 100vh;
+            padding: 2rem;
             display: flex;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            justify-content: center;
+            align-items: flex-start;
         }
-        .card { 
-            background: var(--card-bg); 
-            padding: 25px; 
-            border-radius: 16px; 
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-            margin-bottom: 20px; 
-            transition: transform 0.2s ease;
+
+        .dashboard {
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            animation: fadeIn 1s ease-out;
         }
-        .card:hover { transform: translateY(-3px); }
-        .card h3 { margin-top: 0; color: #e2e8f0; font-size: 1.2rem; }
-        .card p { color: var(--text-muted); line-height: 1.5; margin-bottom: 20px; font-size: 0.95rem; }
-        button { 
-            background: var(--accent); 
-            color: white; 
-            border: none; 
-            padding: 12px 20px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            width: 100%; 
-            font-size: 16px; 
+
+        header { grid-column: 1 / -1; text-align: center; margin-bottom: 1rem; }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(96, 165, 250, 0.3);
+            margin-bottom: 0.5rem;
+        }
+
+        .panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Status Section */
+        .status-header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+        .limit-text { font-size: 1.2rem; font-weight: 600; }
+        .limit-sub { color: var(--text-muted); font-size: 0.9rem; }
+        
+        .progress-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #10b981);
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        /* Rules UI */
+        .rule-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin: 0.2rem;
+            color: var(--text-muted);
+        }
+
+        /* Interactive Cards */
+        .action-card {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        .action-card:hover { border-color: rgba(59, 130, 246, 0.5); transform: translateY(-2px); }
+        .action-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 1rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            font-family: inherit;
             font-weight: 600;
-            transition: all 0.3s ease; 
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
-        button:hover { 
-            background: var(--accent-hover); 
-            box-shadow: 0 0 15px rgba(59,130,246,0.4);
-        }
-        .result { 
-            margin-top: 20px; 
-            padding: 15px; 
-            border-radius: 8px; 
-            display: none; 
-            font-weight: 600; 
-            font-size: 0.95rem;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .success { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.2); display: block; }
-        .error { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); display: block; }
-        .warning { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); display: block; }
-    </style>
-</head>
-<body>
-    <h1>AgentGuard 🛡️</h1>
-    <p class="subtitle">AI Wallet Security Dashboard - NEAR Hackathon 2026</p>
-    
-    <div class="status-banner" id="status-board">
-        📊 Total spent today: $0 out of $10 limit.
-    </div>
+        button:hover { background: var(--primary); color: #fff; box-shadow: 0 0 20px var(--primary-glow); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    <div class="card">
-        <h3>Test 1: Normal Payment</h3>
-        <p>Agent requests a $3 payment to a whitelisted address.</p>
-        <button onclick="testNormal()">Simulate Payment</button>
-        <div id="res1" class="result"></div>
-    </div>
-
-    <div class="card">
-        <h3>Test 2: Over Transaction Limit</h3>
-        <p>Agent requests a $20 payment (Limit is $5 per tx).</p>
-        <button onclick="testOverLimit()">Simulate Payment</button>
-        <div id="res2" class="result"></div>
-    </div>
-
-    <div class="card">
-        <h3>Test 3: Unknown Address</h3>
-        <p>Agent requests a $4 payment to an unknown address.</p>
-        <button onclick="testUnknown()">Simulate Payment</button>
-        <div id="res3" class="result"></div>
-    </div>
-
-    <script>
-        let dailySpent = 0;
-        const maxDaily = 10;
-        function updateStatus() { document.getElementById('status-board').innerText = `📊 Total spent today: $${dailySpent} out of $${maxDaily} limit.`; }
-        function testNormal() {
-            if (dailySpent + 3 <= maxDaily) {
-                dailySpent += 3;
-                document.getElementById('res1').className = 'result success';
-                document.getElementById('res1').innerText = '✅ Auto-Approved: Payment successful.';
-                updateStatus();
-            } else {
-                document.getElementById('res1').className = 'result error';
-                document.getElementById('res1').innerText = '❌ Auto-Rejected: Daily spending limit reached.';
-            }
+        /* Terminal Console */
+        .terminal {
+            grid-column: 1 / -1;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'Fira Code', monospace;
+            height: 250px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
         }
-        function testOverLimit() { document.getElementById('res2').className = 'result error'; document.getElementById('res2').innerText = '❌ Auto-Rejected: Amount exceeds the maximum per transaction limit.'; }
-        function testUnknown() { document.getElementById('res3').className = 'result warning'; document.getElementById('res3').innerText = '⚠️ Human Approval Required: Unrecognized destination address.'; }
-    </script>
-</body>
-</html>
+        .terminal-header { color: #555; margin-bottom: 1rem; font-size: 0.85rem; border-bottom: 1px solid #222; padding-bottom: 0.5rem;}
+        .log-entry { margin-bottom: 0.5rem
